@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#0f1115" />
+<title>Node.js vs Python — Ghid Educațional pentru Moldova</title>
+<meta name="description" content="Prezentare interactivă: Node.js vs Python. Exemple, terminal interactiv și oferte de muncă reale din Moldova." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          bg:      '#0f1115',
+          panel:   '#181b22',
+          panel2:  '#1f232c',
+          border:  '#2a2e38',
+          text:    '#e8eaed',
+          muted:   '#9aa0aa',
+          node:    '#7fdb7f',
+          py:      '#ffd84a',
+          danger:  '#ff6b6b',
+        },
+        fontFamily: {
+          sans: ['Inter', 'system-ui', 'sans-serif'],
+          mono: ['JetBrains Mono', 'monospace'],
+        },
+      }
+    }
+  }
+</script>
+
+<style>
+  html, body { background: #0f1115; color: #e8eaed; }
+  body { font-family: 'Inter', system-ui, sans-serif; }
+
+  /* Slide system */
+  .slide {
+    position: absolute; inset: 0;
+    opacity: 0; pointer-events: none;
+    transform: translateY(24px);
+    transition: opacity .45s ease, transform .45s ease;
+    overflow-y: auto;
+  }
+  .slide.active {
+    opacity: 1; pointer-events: auto;
+    transform: translateY(0);
+  }
+  .slide-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 64px 32px 96px;
+    min-height: 100%;
+    display: flex; flex-direction: column;
+  }
+  @media (max-width: 640px) {
+    .slide-inner { padding: 48px 20px 96px; }
+  }
+
+  /* Fade-in stagger */
+  .fade-in { opacity: 0; transform: translateY(12px); animation: fadeIn .6s forwards; }
+  @keyframes fadeIn { to { opacity: 1; transform: translateY(0); } }
+  .delay-1 { animation-delay: .08s; }
+  .delay-2 { animation-delay: .16s; }
+  .delay-3 { animation-delay: .24s; }
+  .delay-4 { animation-delay: .32s; }
+  .delay-5 { animation-delay: .40s; }
+
+  /* Code blocks */
+  pre, code { font-family: 'JetBrains Mono', monospace; }
+  .code-block {
+    background: #0b0d12;
+    border: 1px solid #2a2e38;
+    border-radius: 12px;
+    padding: 18px 20px;
+    font-size: 13.5px;
+    line-height: 1.7;
+    overflow-x: auto;
+    color: #d6d8de;
+  }
+  .tok-key { color: #c084fc; }
+  .tok-str { color: #fde68a; }
+  .tok-num { color: #fb923c; }
+  .tok-com { color: #6b7280; font-style: italic; }
+  .tok-fn  { color: #60a5fa; }
+  .tok-var { color: #34d399; }
+
+  /* Glow */
+  .glow-node { box-shadow: 0 0 0 1px rgba(127,219,127,.25), 0 0 40px -8px rgba(127,219,127,.35); }
+  .glow-py   { box-shadow: 0 0 0 1px rgba(255,216,74,.25),  0 0 40px -8px rgba(255,216,74,.35); }
+
+  /* Caret */
+  .caret::after {
+    content: '▌';
+    animation: blink 1s step-end infinite;
+    color: #7fdb7f;
+    margin-left: 2px;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* Floating dots bg */
+  .bg-dots {
+    background-image: radial-gradient(rgba(255,255,255,.06) 1px, transparent 1px);
+    background-size: 22px 22px;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: #0f1115; }
+  ::-webkit-scrollbar-thumb { background: #2a2e38; border-radius: 8px; }
+  ::-webkit-scrollbar-thumb:hover { background: #3a3f4c; }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: transform .15s ease, background .15s ease, border-color .15s ease;
+    border: 1px solid transparent;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-primary { background: #7fdb7f; color: #0f1115; }
+  .btn-primary:hover { background: #9be79b; }
+  .btn-ghost { background: transparent; border-color: #2a2e38; color: #e8eaed; }
+  .btn-ghost:hover { background: #181b22; }
+
+  /* Card */
+  .card {
+    background: #181b22;
+    border: 1px solid #2a2e38;
+    border-radius: 16px;
+  }
+  .card-hover { transition: transform .2s ease, border-color .2s ease; }
+  .card-hover:hover { transform: translateY(-3px); border-color: #3a3f4c; }
+
+  /* Progress bar */
+  .progress { transition: width .4s ease; }
+
+  /* Bar chart anim */
+  .bar { transition: width 1s cubic-bezier(.2,.8,.2,1); }
+
+  /* Hide scrollbar on slide-inner */
+  .slide::-webkit-scrollbar { width: 6px; }
+
+  /* Pulse */
+  @keyframes pulseRing {
+    0% { box-shadow: 0 0 0 0 rgba(127,219,127,.5); }
+    70% { box-shadow: 0 0 0 14px rgba(127,219,127,0); }
+    100% { box-shadow: 0 0 0 0 rgba(127,219,127,0); }
+  }
+  .pulse-ring { animation: pulseRing 2s infinite; }
+</style>
+</head>
+
+<body class="bg-bg text-text">
+
+<!-- Top progress bar -->
+<div class="fixed top-0 left-0 right-0 z-50 h-[3px] bg-border/40">
+  <div id="progressBar" class="progress h-full bg-node" style="width: 10%;"></div>
+</div>
+
+<!-- Slide counter top-right -->
+<div class="fixed top-4 right-4 z-40 text-xs font-mono text-muted bg-panel/80 backdrop-blur px-3 py-1.5 rounded-lg border border-border">
+  <span id="slideNum">1</span> / <span id="slideTotal">10</span>
+</div>
+
+<!-- Slide title pill top-left -->
+<div class="fixed top-4 left-4 z-40 hidden sm:flex items-center gap-2 text-xs font-medium text-muted bg-panel/80 backdrop-blur px-3 py-1.5 rounded-lg border border-border">
+  <span class="w-2 h-2 rounded-full bg-node animate-pulse"></span>
+  <span id="slideTitle">Introducere</span>
+</div>
+
+<!-- Main stage -->
+<main id="stage" class="relative w-full" style="min-height: 100vh;">
+
+  <!-- ============ SLIDE 1 — TITLE ============ -->
+  <section class="slide active bg-dots" data-title="Introducere">
+    <div class="slide-inner items-center justify-center text-center">
+      <div class="fade-in inline-flex items-center gap-2 rounded-full border border-border bg-panel px-4 py-1.5 text-xs uppercase tracking-widest text-muted">
+        <span class="w-1.5 h-1.5 rounded-full bg-node"></span>
+        Ghid educațional · Moldova 2026
+      </div>
+      <h1 class="fade-in delay-1 mt-6 text-5xl sm:text-7xl md:text-8xl font-extrabold tracking-tight">
+        <span class="text-node">Node.js</span>
+        <span class="text-muted font-light"> vs </span>
+        <span class="text-py">Python</span>
+      </h1>
+      <p class="fade-in delay-2 mt-6 max-w-2xl text-lg sm:text-xl text-muted leading-relaxed">
+        Ce e mai bine de învățat, unde se folosește fiecare și unde găsești de muncă chiar acum în Moldova.
+      </p>
+      <div class="fade-in delay-3 mt-12 flex flex-wrap items-center justify-center gap-3">
+        <button onclick="goNext()" class="btn btn-primary pulse-ring">
+          Începe prezentarea
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </button>
+        <span class="text-xs text-muted font-mono">sau folosește săgețile ← →</span>
+      </div>
+
+      <div class="fade-in delay-4 mt-20 grid grid-cols-3 gap-6 sm:gap-12 text-left">
+        <div>
+          <div class="text-3xl sm:text-4xl font-bold text-node">10</div>
+          <div class="text-xs sm:text-sm text-muted mt-1">slide-uri interactive</div>
+        </div>
+        <div>
+          <div class="text-3xl sm:text-4xl font-bold text-py">2</div>
+          <div class="text-xs sm:text-sm text-muted mt-1">limbaje rulate live</div>
+        </div>
+        <div>
+          <div class="text-3xl sm:text-4xl font-bold text-text">4</div>
+          <div class="text-xs sm:text-sm text-muted mt-1">site-uri de joburi MD</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SLIDE 2 — CE SUNT ============ -->
+  <section class="slide" data-title="Ce sunt">
+    <div class="slide-inner">
+      <div class="fade-in text-xs uppercase tracking-widest text-muted">01 — Definiții</div>
+      <h2 class="fade-in delay-1 mt-2 text-4xl sm:text-5xl font-bold tracking-tight">Ce este fiecare</h2>
+      <p class="fade-in delay-2 mt-3 max-w-2xl text-muted">Două tehnologii cu filosofii diferite. Ambele rezolvă probleme reale, dar nu pe aceleași.</p>
+
+      <div class="grid md:grid-cols-2 gap-6 mt-10 flex-1">
+        <!-- Node card -->
+        <div class="fade-in delay-3 card p-7 glow-node">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-xl bg-node/15 flex items-center justify-center text-node text-2xl font-bold font-mono">JS</div>
+            <div>
+              <h3 class="text-2xl font-bold text-node">Node.js</h3>
+              <p class="text-xs text-muted">JavaScript runtime · 2009 · Ryan Dahl</p>
+            </div>
+          </div>
+          <p class="mt-5 text-text/90 leading-relaxed">
+            Rulează JavaScript în afara browser-ului, peste motorul V8 al Chrome. Folosește un loop de evenimente non-blocant — perfect pentru I/O paralel masiv.
+          </p>
+          <ul class="mt-5 space-y-2 text-sm">
+            <li class="flex gap-2"><span class="text-node">▸</span> Single-threaded, async by default</li>
+            <li class="flex gap-2"><span class="text-node">▸</span> NPM — cel mai mare ecosistem de pachete</li>
+            <li class="flex gap-2"><span class="text-node">▸</span> Același limbaj în frontend și backend</li>
+            <li class="flex gap-2"><span class="text-node">▸</span> Rapid pentru API-uri și real-time</li>
+          </ul>
+        </div>
+
+        <!-- Python card -->
+        <div class="fade-in delay-4 card p-7 glow-py">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-xl bg-py/15 flex items-center justify-center text-py text-2xl font-bold font-mono">Py</div>
+            <div>
+              <h3 class="text-2xl font-bold text-py">Python</h3>
+              <p class="text-xs text-muted">Limbaj general · 1991 · Guido van Rossum</p>
+            </div>
+          </div>
+          <p class="mt-5 text-text/90 leading-relaxed">
+            Limbaj interpretat, multi-paradigmă, cu sintaxă citibilă ca proza. Standardul de facto pentru AI, data science și automatizare științifică.
+          </p>
+          <ul class="mt-5 space-y-2 text-sm">
+            <li class="flex gap-2"><span class="text-py">▸</span> Sintaxă curată, ușor de citit</li>
+            <li class="flex gap-2"><span class="text-py">▸</span> NumPy, Pandas, PyTorch, TensorFlow</li>
+            <li class="flex gap-2"><span class="text-py">▸</span> Lider absolut în AI și ML</li>
+            <li class="flex gap-2"><span class="text-py">▸</span> Ideal pentru scripting și prototipare</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SLIDE 3 — COMPARAȚIE ============ -->
+  <section class="slide" data-title="Comparație">
+    <div class="slide-inner">
+      <div class="fade-in text-xs uppercase tracking-widest text-muted">02 — Comparație tehnică</div>
+      <h2 class="fade-in delay-1 mt-2 text-4xl sm:text-5xl font-bold tracking-tight">Față în față</h2>
+
+      <div class="fade-in delay-2 mt-10 card overflow-hidden">
+        <div class="grid grid-cols-[1.2fr_1fr_1fr] text-sm">
+          <div class="bg-panel2 px-5 py-4 font-semibold text-muted border-b border-border">Criteriu</div>
+          <div class="bg-panel2 px-5 py-4 font-semibold text-node border-b border-border text-center">Node.js</div>
+          <div class="bg-panel2 px-5 py-4 font-semibold text-py border-b border-border text-center">Python</div>
+
+          <div class="px-5 py-4 border-b border-border/60 text-muted">Performanță I/O</div>
+          <div class="px-5 py-4 border-b border-border/60 text-center">Excelentă (event loop)</div>
+          <div class="px-5 py-4 border-b border-border/60 text-center">Bună (async/await)</div>
+
+          <div class="px-5 py-4 border-b border-border/60 text-muted">CPU-intensive</div>
+          <div class="px-5 py-4 border-b border-border/60 text-center">Slabă (single thread)</div>
+          <div class="px-5 py-4 border-b border-border/60 text-center">Bună (cu C extensions)</div>
+
+          <div class="px-5 py-4 border-b border-border/60 text-muted">Curba de învățare</div>
+          <div class="px-5 py-4 border-b border-border/60 text-center">Medie</div>
+          <div class="px-5 py-4 border-b border-border/60 text-center">Foarte ușoară</div>
+
+          <div class="px-5 py-4 border-b border-border/60 text-muted">Manager pachete</div>
+          <div class="px-5 py-4 border-b border-border/60 text-center font-mono text-xs">npm / pnpm</div>
+          <div class="px-5 py-4 border-b border-border/60 text-center font-mono text-xs">pip / uv</div>
+
+          <div class="px-5 py-4 border-b border-border/60 text-muted">Domeniu dominant</div>
+          <div class="px-5 py-4 border-b border-border/60 text-center">Web, API-uri, real-time</div>
+          <div class="px-5 py-4 border-b border-border/60 text-center">AI, data, automatizare</div>
+
+          <div class="px-5 py-4 border-b border-border/60 text-muted">Sintaxă</div>
+          <div class="px-5 py-4 border-b border-border/60 text-center">C-style, acolade</div>
+          <div class="px-5 py-4 border-b border-border/60 text-center">Indentare, fără paranteze</div>
+
+          <div class="px-5 py-4 text-muted">Concurență</div>
+          <div class="px-5 py-4 text-center">Async event loop</div>
+          <div class="px-5 py-4 text-center">asyncio + threading</div>
+        </div>
+      </div>
+
+      <!-- Popularity bars -->
+      <div class="fade-in delay-3 mt-8 card p-6">
+        <div class="text-xs uppercase tracking-widest text-muted mb-4">Popularitate (Stack Overflow Survey 2025, „cel mai folosit")</div>
+        <div class="space-y-3">
+          <div>
+            <div class="flex justify-between text-sm mb-1.5"><span>Python</span><span class="text-py font-semibold">51%</span></div>
+            <div class="h-2 bg-panel2 rounded-full overflow-hidden"><div class="bar h-full bg-py" style="width: 0%" data-target="51"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-sm mb-1.5"><span>Node.js</span><span class="text-node font-semibold">42%</span></div>
+            <div class="h-2 bg-panel2 rounded-full overflow-hidden"><div class="bar h-full bg-node" style="width: 0%" data-target="42"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SLIDE 4 — UNDE SE FOLOSESC ============ -->
+  <section class="slide" data-title="Unde se folosesc">
+    <div class="slide-inner">
+      <div class="fade-in text-xs uppercase tracking-widest text-muted">03 — Cazuri de utilizare</div>
+      <h2 class="fade-in delay-1 mt-2 text-4xl sm:text-5xl font-bold tracking-tight">Unde se folosește fiecare</h2>
+
+      <div class="grid md:grid-cols-2 gap-6 mt-10">
+        <!-- Node uses -->
+        <div class="fade-in delay-2 card p-6">
+          <div class="flex items-center gap-2 text-node font-bold text-lg mb-4">
+            <span class="w-2 h-2 rounded-full bg-node"></span> Node.js domină în
+          </div>
+          <ul class="space-y-3">
+            <li class="card-hover card !bg-panel2 p-4 flex gap-3">
+              <span class="text-2xl">⚡</span>
+              <div><div class="font-semibold">API-uri REST și GraphQL</div><div class="text-xs text-muted mt-0.5">Express, Fastify, NestJS</div></div>
+            </li>
+            <li class="card-hover card !bg-panel2 p-4 flex gap-3">
+              <span class="text-2xl">💬</span>
+              <div><div class="font-semibold">Chat și real-time</div><div class="text-xs text-muted mt-0.5">Socket.io, WebRTC, streaming</div></div>
+            </li>
+            <li class="card-hover card !bg-panel2 p-4 flex gap-3">
+              <span class="text-2xl">🌐</span>
+              <div><div class="font-semibold">Aplicații web full-stack</div><div class="text-xs text-muted mt-0.5">Next.js, Remix, Nuxt</div></div>
+            </li>
+            <li class="card-hover card !bg-panel2 p-4 flex gap-3">
+              <span class="text-2xl">🛠️</span>
+              <div><div class="font-semibold">Microservicii & serverless</div><div class="text-xs text-muted mt-0.5">Vercel, AWS Lambda</div></div>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Python uses -->
+        <div class="fade-in delay-3 card p-6">
+          <div class="flex items-center gap-2 text-py font-bold text-lg mb-4">
+            <span class="w-2 h-2 rounded-full bg-py"></span> Python domină în
+          </div>
+          <ul class="space-y-3">
+            <li class="card-hover card !bg-panel2 p-4 flex gap-3">
+              <span class="text-2xl">🤖</span>
+              <div><div class="font-semibold">Inteligență artificială & ML</div><div class="text-xs text-muted mt-0.5">PyTorch, TensorFlow, scikit-learn</div></div>
+            </li>
+            <li class="card-hover card !bg-panel2 p-4 flex gap-3">
+              <span class="text-2xl">📊</span>
+              <div><div class="font-semibold">Data science & analiză</div><div class="text-xs text-muted mt-0.5">Pandas, NumPy, Jupyter</div></div>
+            </li>
+            <li class="card-hover card !bg-panel2 p-4 flex gap-3">
+              <span class="text-2xl">⚙️</span>
+              <div><div class="font-semibold">Automatizare & scripting</div><div class="text-xs text-muted mt-0.5">Selenium, BeautifulSoup, scraping</div></div>
+            </li>
+            <li class="card-hover card !bg-panel2 p-4 flex gap-3">
+              <span class="text-2xl">🔬</span>
+              <div><div class="font-semibold">Cercetare științifică</div><div class="text-xs text-muted mt-0.5">SciPy, simulări, biotehnologie</div></div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SLIDE 5 — EXEMPLE DE COD ============ -->
+  <section class="slide" data-title="Exemple de cod">
+    <div class="slide-inner">
+      <div class="fade-in text-xs uppercase tracking-widest text-muted">04 — Sintaxă comparată</div>
+      <h2 class="fade-in delay-1 mt-2 text-4xl sm:text-5xl font-bold tracking-tight">Aceeași problemă, două limbaje</h2>
+      <p class="fade-in delay-2 mt-3 text-muted">Server HTTP simplu care răspunde cu un JSON.</p>
+
+      <div class="grid md:grid-cols-2 gap-6 mt-8 flex-1">
+        <!-- Node example -->
+        <div class="fade-in delay-3 card overflow-hidden">
+          <div class="flex items-center justify-between px-5 py-3 bg-panel2 border-b border-border">
+            <div class="flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-danger/70"></span>
+              <span class="w-3 h-3 rounded-full bg-py/70"></span>
+              <span class="w-3 h-3 rounded-full bg-node/70"></span>
+            </div>
+            <span class="font-mono text-xs text-muted">server.js</span>
+            <span class="text-node text-xs font-bold">Node.js</span>
+          </div>
+<pre class="code-block !rounded-none !border-0"><span class="tok-key">import</span> express <span class="tok-key">from</span> <span class="tok-str">'express'</span>
+
+<span class="tok-key">const</span> <span class="tok-var">app</span> = <span class="tok-fn">express</span>()
+
+<span class="tok-var">app</span>.<span class="tok-fn">get</span>(<span class="tok-str">'/api/hello'</span>, (req, res) =&gt; {
+  res.<span class="tok-fn">json</span>({
+    message: <span class="tok-str">'Salut din Moldova!'</span>,
+    time: <span class="tok-key">new</span> <span class="tok-fn">Date</span>().<span class="tok-fn">toISOString</span>()
+  })
+})
+
+<span class="tok-var">app</span>.<span class="tok-fn">listen</span>(<span class="tok-num">3000</span>, () =&gt; {
+  <span class="tok-fn">console</span>.<span class="tok-fn">log</span>(<span class="tok-str">'API pe :3000'</span>)
+})</pre>
+        </div>
+
+        <!-- Python example -->
+        <div class="fade-in delay-4 card overflow-hidden">
+          <div class="flex items-center justify-between px-5 py-3 bg-panel2 border-b border-border">
+            <div class="flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-danger/70"></span>
+              <span class="w-3 h-3 rounded-full bg-py/70"></span>
+              <span class="w-3 h-3 rounded-full bg-node/70"></span>
+            </div>
+            <span class="font-mono text-xs text-muted">server.py</span>
+            <span class="text-py text-xs font-bold">Python</span>
+          </div>
+<pre class="code-block !rounded-none !border-0"><span class="tok-key">from</span> fastapi <span class="tok-key">import</span> FastAPI
+<span class="tok-key">from</span> datetime <span class="tok-key">import</span> datetime
+
+app = <span class="tok-fn">FastAPI</span>()
+
+<span class="tok-com">@app.get(<span class="tok-str">"/api/hello"</span>)</span>
+<span class="tok-key">def</span> <span class="tok-fn">hello</span>():
+    <span class="tok-key">return</span> {
+        <span class="tok-str">"message"</span>: <span class="tok-str">"Salut din Moldova!"</span>,
+        <span class="tok-str">"time"</span>: datetime.<span class="tok-fn">now</span>().<span class="tok-fn">isoformat</span>()
+    }
+
+<span class="tok-com"># uvicorn server:app --port 3000</span></pre>
+        </div>
+      </div>
+
+      <div class="fade-in delay-5 mt-6 grid sm:grid-cols-3 gap-3 text-sm">
+        <div class="card p-4"><span class="text-muted text-xs">Linii de cod</span><div class="mt-1"><span class="text-node font-bold">11</span> vs <span class="text-py font-bold">10</span></div></div>
+        <div class="card p-4"><span class="text-muted text-xs">Stil</span><div class="mt-1">Callback-based vs Decorators</div></div>
+        <div class="card p-4"><span class="text-muted text-xs">Pornire</span><div class="mt-1 font-mono text-xs">node server.js · uvicorn server</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SLIDE 6 — TERMINAL INTERACTIV ============ -->
+  <section class="slide" data-title="Terminal interactiv">
+    <div class="slide-inner">
+      <div class="fade-in text-xs uppercase tracking-widest text-muted">05 — Antrenament live</div>
+      <h2 class="fade-in delay-1 mt-2 text-4xl sm:text-5xl font-bold tracking-tight">Rulează cod direct în browser</h2>
+      <p class="fade-in delay-2 mt-3 text-muted">JavaScript prin V8 (browser-ul tău). Python prin Pyodide (WebAssembly). Niciun setup.</p>
+
+      <!-- Lang switcher -->
+      <div class="fade-in delay-3 mt-6 inline-flex w-fit rounded-xl border border-border bg-panel p-1">
+        <button id="langJs" onclick="setLang('js')" class="px-5 py-2 rounded-lg font-semibold text-sm transition bg-node text-bg">JavaScript</button>
+        <button id="langPy" onclick="setLang('py')" class="px-5 py-2 rounded-lg font-semibold text-sm transition text-muted hover:text-text">Python</button>
+      </div>
+
+      <!-- Editor + output -->
+      <div class="fade-in delay-4 mt-4 card overflow-hidden">
+        <div class="grid lg:grid-cols-2">
+          <!-- Editor -->
+          <div class="border-b lg:border-b-0 lg:border-r border-border">
+            <div class="flex items-center justify-between px-4 py-2.5 bg-panel2 border-b border-border">
+              <span class="font-mono text-xs text-muted" id="editorTitle">main.js</span>
+              <div class="flex gap-2">
+                <button onclick="resetCode()" class="text-xs text-muted hover:text-text font-mono">reset</button>
+                <button onclick="runCode()" id="runBtn" class="btn btn-primary !py-1.5 !px-4 !text-xs">▶ Run</button>
+              </div>
+            </div>
+            <textarea id="editor" spellcheck="false"
+              class="w-full h-[320px] bg-transparent p-4 font-mono text-sm text-text outline-none resize-none"></textarea>
+          </div>
+          <!-- Output -->
+          <div>
+            <div class="flex items-center justify-between px-4 py-2.5 bg-panel2 border-b border-border">
+              <span class="font-mono text-xs text-muted">output</span>
+              <button onclick="clearOut()" class="text-xs text-muted hover:text-text font-mono">clear</button>
+            </div>
+            <div id="output" class="h-[320px] overflow-y-auto p-4 font-mono text-sm leading-relaxed bg-bg/40">
+              <div class="text-muted">$ apasă <span class="text-node">▶ Run</span> pentru a executa codul...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <p class="fade-in delay-5 mt-3 text-xs text-muted">
+        Prima execuție Python descarcă Pyodide (~6MB). Suportă <code class="font-mono text-text/80">await</code> top-level în JS.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============ SLIDE 7 — EXERCIȚII ============ -->
+  <section class="slide" data-title="Exerciții">
+    <div class="slide-inner">
+      <div class="fade-in text-xs uppercase tracking-widest text-muted">06 — Antrenament</div>
+      <h2 class="fade-in delay-1 mt-2 text-4xl sm:text-5xl font-bold tracking-tight">6 exerciții pentru tine</h2>
+      <p class="fade-in delay-2 mt-3 text-muted">Citește, încearcă în terminal, apoi vezi soluția.</p>
+
+      <div id="exerciseList" class="grid md:grid-cols-2 gap-4 mt-8"></div>
+    </div>
+  </section>
+
+  <!-- ============ SLIDE 8 — VERDICT ============ -->
+  <section class="slide" data-title="Ce să alegi">
+    <div class="slide-inner">
+      <div class="fade-in text-xs uppercase tracking-widest text-muted">07 — Decizia</div>
+      <h2 class="fade-in delay-1 mt-2 text-4xl sm:text-5xl font-bold tracking-tight">Ce alegi pentru viitor</h2>
+
+      <div class="grid md:grid-cols-3 gap-5 mt-10">
+        <div class="fade-in delay-2 card p-6 glow-node">
+          <div class="text-node font-bold mb-2">Vrei să fii web developer</div>
+          <p class="text-2xl font-bold">Node.js</p>
+          <p class="text-sm text-muted mt-3">Site-uri, API-uri, full-stack cu același limbaj. Cerere mare în outsourcing-ul moldovenesc.</p>
+        </div>
+        <div class="fade-in delay-3 card p-6 glow-py">
+          <div class="text-py font-bold mb-2">Vrei AI / data / cercetare</div>
+          <p class="text-2xl font-bold">Python</p>
+          <p class="text-sm text-muted mt-3">Standardul absolut pentru ML, ChatGPT-like, analiză de date, automatizare.</p>
+        </div>
+        <div class="fade-in delay-4 card p-6">
+          <div class="font-bold mb-2 text-text">Nu știi ce vrei?</div>
+          <p class="text-2xl font-bold"><span class="text-py">Python</span> <span class="text-muted text-base">primul</span></p>
+          <p class="text-sm text-muted mt-3">Sintaxă mai prietenoasă, util în orice domeniu. Apoi adaugi JavaScript pentru web.</p>
+        </div>
+      </div>
+
+      <div class="fade-in delay-5 mt-8 card p-6 border-node/40">
+        <div class="text-xs uppercase tracking-widest text-node mb-3">Sfat pe termen lung 2026+</div>
+        <p class="text-text/90 leading-relaxed">
+          Cele mai bine plătite job-uri combină <span class="text-node font-semibold">Node.js (TypeScript)</span> pentru web cu
+          <span class="text-py font-semibold">Python</span> pentru AI/automatizare. Învață ambele într-o ordine care ține de scop:
+          web mai întâi → JavaScript; AI mai întâi → Python. Restul vine natural.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SLIDE 9 — JOBURI MOLDOVA ============ -->
+  <section class="slide" data-title="Joburi în Moldova">
+    <div class="slide-inner">
+      <div class="fade-in text-xs uppercase tracking-widest text-muted">08 — Piața de muncă</div>
+      <h2 class="fade-in delay-1 mt-2 text-4xl sm:text-5xl font-bold tracking-tight">Caută acum în Moldova</h2>
+      <p class="fade-in delay-2 mt-3 text-muted max-w-2xl">
+        Link-urile de mai jos sunt căutări <span class="text-node font-semibold">live</span> pe cele 4 mari portaluri din Moldova — afișează mereu ofertele actuale, niciodată cache vechi.
+      </p>
+
+      <!-- Toggle -->
+      <div class="fade-in delay-3 mt-6 inline-flex w-fit rounded-xl border border-border bg-panel p-1">
+        <button id="jobNode" onclick="setJobLang('node')" class="px-5 py-2 rounded-lg font-semibold text-sm bg-node text-bg">Joburi Node.js</button>
+        <button id="jobPy" onclick="setJobLang('py')" class="px-5 py-2 rounded-lg font-semibold text-sm text-muted hover:text-text">Joburi Python</button>
+      </div>
+
+      <div id="jobGrid" class="fade-in delay-4 grid md:grid-cols-2 gap-5 mt-6"></div>
+
+      <p class="fade-in delay-5 mt-6 text-xs text-muted">
+        Tarifele orientative: Junior 800–1500 USD · Mid 1500–2500 USD · Senior 2500–4000+ USD (conform anunțurilor publice 2025–2026).
+      </p>
+    </div>
+  </section>
+
+  <!-- ============ SLIDE 10 — OUTRO ============ -->
+  <section class="slide" data-title="Resurse">
+    <div class="slide-inner items-center justify-center text-center">
+      <div class="fade-in text-xs uppercase tracking-widest text-muted">09 — Următorul pas</div>
+      <h2 class="fade-in delay-1 mt-2 text-4xl sm:text-6xl font-bold tracking-tight">Cunoștințele se construiesc <br/> făcând, nu citind.</h2>
+
+      <div class="fade-in delay-2 mt-10 grid sm:grid-cols-2 gap-4 max-w-3xl w-full text-left">
+        <a href="https://nodejs.org/en/learn" target="_blank" rel="noopener" class="card card-hover p-5 group">
+          <div class="text-node font-bold mb-1">Node.js — official</div>
+          <div class="text-sm text-muted">nodejs.org/en/learn</div>
+        </a>
+        <a href="https://docs.python.org/3/tutorial/" target="_blank" rel="noopener" class="card card-hover p-5 group">
+          <div class="text-py font-bold mb-1">Python — official tutorial</div>
+          <div class="text-sm text-muted">docs.python.org/3/tutorial</div>
+        </a>
+        <a href="https://www.freecodecamp.org/" target="_blank" rel="noopener" class="card card-hover p-5 group">
+          <div class="font-bold mb-1">freeCodeCamp</div>
+          <div class="text-sm text-muted">Proiecte gratuite, ambele limbaje</div>
+        </a>
+        <a href="https://github.com/" target="_blank" rel="noopener" class="card card-hover p-5 group">
+          <div class="font-bold mb-1">GitHub</div>
+          <div class="text-sm text-muted">Construiește portofoliu public</div>
+        </a>
+      </div>
+
+      <div class="fade-in delay-3 mt-12 flex flex-wrap items-center justify-center gap-3">
+        <button onclick="goTo(0)" class="btn btn-ghost">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          Reia prezentarea
+        </button>
+        <button onclick="goTo(8)" class="btn btn-primary">
+          Vezi joburile din Moldova
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+
+      <div class="mt-16 text-xs text-muted">Făcut pentru dezvoltatorii din Moldova · 2026</div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ============ NAVIGATION CONTROLS ============ -->
+<nav class="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 flex items-center gap-2 rounded-2xl border border-border bg-panel/90 backdrop-blur px-3 py-2 shadow-2xl">
+  <button onclick="goPrev()" id="prevBtn" class="w-10 h-10 rounded-xl flex items-center justify-center text-muted hover:text-text hover:bg-panel2 disabled:opacity-30 disabled:cursor-not-allowed transition" aria-label="Anterior">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+  </button>
+  <div id="dots" class="flex gap-1.5 px-2"></div>
+  <button onclick="goNext()" id="nextBtn" class="w-10 h-10 rounded-xl flex items-center justify-center text-muted hover:text-text hover:bg-panel2 disabled:opacity-30 disabled:cursor-not-allowed transition" aria-label="Următor">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+  </button>
+</nav>
+
+<!-- ============ SCRIPTS ============ -->
+<script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
+<script>
+/* ===== Slide system ===== */
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+let current = 0;
+
+const dotsEl = document.getElementById('dots');
+const slideNumEl = document.getElementById('slideNum');
+const slideTotalEl = document.getElementById('slideTotal');
+const slideTitleEl = document.getElementById('slideTitle');
+const progressBar = document.getElementById('progressBar');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+
+slideTotalEl.textContent = total;
+for (let i = 0; i < total; i++) {
+  const d = document.createElement('button');
+  d.className = 'w-2 h-2 rounded-full bg-border hover:bg-muted transition';
+  d.setAttribute('aria-label', 'Slide ' + (i + 1));
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function update() {
+  slides.forEach((s, i) => {
+    s.classList.toggle('active', i === current);
+    if (i === current) {
+      // re-trigger fade-in by removing/adding class
+      s.querySelectorAll('.fade-in').forEach(el => {
+        el.style.animation = 'none';
+        void el.offsetWidth;
+        el.style.animation = '';
+      });
+    }
+  });
+  dotsEl.querySelectorAll('button').forEach((b, i) => {
+    b.className = i === current
+      ? 'w-6 h-2 rounded-full bg-node transition'
+      : 'w-2 h-2 rounded-full bg-border hover:bg-muted transition';
+  });
+  slideNumEl.textContent = current + 1;
+  slideTitleEl.textContent = slides[current].dataset.title || '';
+  progressBar.style.width = ((current + 1) / total * 100) + '%';
+  prevBtn.disabled = current === 0;
+  nextBtn.disabled = current === total - 1;
+
+  // Trigger bar animation on comparison slide
+  if (current === 2) {
+    setTimeout(() => {
+      document.querySelectorAll('.bar').forEach(b => {
+        b.style.width = b.dataset.target + '%';
+      });
+    }, 300);
+  } else {
+    document.querySelectorAll('.bar').forEach(b => { b.style.width = '0%'; });
+  }
+
+  window.scrollTo(0, 0);
+}
+function goNext() { if (current < total - 1) { current++; update(); } }
+function goPrev() { if (current > 0) { current--; update(); } }
+function goTo(i) { current = Math.max(0, Math.min(total - 1, i)); update(); }
+
+document.addEventListener('keydown', (e) => {
+  if (['ArrowRight', ' ', 'PageDown'].includes(e.key)) { e.preventDefault(); goNext(); }
+  else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); goPrev(); }
+  else if (e.key === 'Home') { goTo(0); }
+  else if (e.key === 'End') { goTo(total - 1); }
+});
+
+update();
+
+/* ===== Terminal interactiv ===== */
+const defaultCode = {
+  js: `// Salut din Moldova!
+const limbi = ['JavaScript', 'TypeScript', 'Python']
+
+for (const l of limbi) {
+  console.log('->', l)
+}
+
+// async funcționează
+const data = await fetch('https://api.github.com')
+console.log('status:', data.status)
+
+// reduce + arrow
+const suma = [1, 2, 3, 4, 5].reduce((a, b) => a + b, 0)
+console.log('suma 1..5 =', suma)`,
+  py: `# Salut din Moldova!
+limbi = ['JavaScript', 'TypeScript', 'Python']
+
+for l in limbi:
+    print('->', l)
+
+# list comprehension
+patrate = [x*x for x in range(1, 6)]
+print('pătrate:', patrate)
+
+# funcție
+def fib(n):
+    a, b = 0, 1
+    rez = []
+    for _ in range(n):
+        rez.append(a)
+        a, b = b, a + b
+    return rez
+
+print('fibonacci 8:', fib(8))`
+};
+
+let lang = 'js';
+const editor = document.getElementById('editor');
+const output = document.getElementById('output');
+const editorTitle = document.getElementById('editorTitle');
+let pyodide = null;
+
+editor.value = defaultCode.js;
+
+function setLang(l) {
+  lang = l;
+  document.getElementById('langJs').className =
+    l === 'js' ? 'px-5 py-2 rounded-lg font-semibold text-sm bg-node text-bg' : 'px-5 py-2 rounded-lg font-semibold text-sm text-muted hover:text-text';
+  document.getElementById('langPy').className =
+    l === 'py' ? 'px-5 py-2 rounded-lg font-semibold text-sm bg-py text-bg' : 'px-5 py-2 rounded-lg font-semibold text-sm text-muted hover:text-text';
+  editor.value = defaultCode[l];
+  editorTitle.textContent = l === 'js' ? 'main.js' : 'main.py';
+  clearOut();
+}
+
+function resetCode() {
+  editor.value = defaultCode[lang];
+}
+
+function clearOut() {
+  output.innerHTML = '<div class="text-muted">$ apasă <span class="text-node">▶ Run</span> pentru a executa codul...</div>';
+}
+
+function appendLine(text, color = 'text-text/90') {
+  const div = document.createElement('div');
+  div.className = color + ' whitespace-pre-wrap break-words';
+  div.textContent = text;
+  output.appendChild(div);
+  output.scrollTop = output.scrollHeight;
+}
+
+async function runCode() {
+  const btn = document.getElementById('runBtn');
+  btn.disabled = true;
+  btn.textContent = '… running';
+  output.innerHTML = '';
+  appendLine('$ ' + (lang === 'js' ? 'node main.js' : 'python main.py'), 'text-muted text-xs');
+
+  try {
+    if (lang === 'js') {
+      const logs = [];
+      const fakeConsole = {
+        log: (...args) => logs.push(args.map(a => typeof a === 'object' ? JSON.stringify(a, null, 2) : String(a)).join(' ')),
+        error: (...args) => logs.push('[err] ' + args.map(String).join(' ')),
+        warn: (...args) => logs.push('[warn] ' + args.map(String).join(' ')),
+        info: (...args) => logs.push(args.map(String).join(' ')),
+      };
+      const fn = new Function('console', `return (async () => { ${editor.value} })()`);
+      const result = await fn(fakeConsole);
+      logs.forEach(l => appendLine(l));
+      if (result !== undefined) appendLine('=> ' + (typeof result === 'object' ? JSON.stringify(result, null, 2) : String(result)), 'text-node');
+    } else {
+      if (!pyodide) {
+        appendLine('Se încarcă Pyodide (~6MB, doar prima dată)...', 'text-py');
+        pyodide = await loadPyodide();
+        appendLine('Pyodide gata.', 'text-node');
+      }
+      pyodide.setStdout({ batched: (s) => appendLine(s) });
+      pyodide.setStderr({ batched: (s) => appendLine(s, 'text-danger') });
+      await pyodide.runPythonAsync(editor.value);
+    }
+    appendLine('$ done.', 'text-muted text-xs');
+  } catch (err) {
+    appendLine(String(err.message || err), 'text-danger');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '▶ Run';
+  }
+}
+
+/* ===== Exerciții ===== */
+const exercises = [
+  {
+    title: 'FizzBuzz',
+    diff: 'Începător',
+    color: 'node',
+    desc: 'Pentru numerele 1–20: tipărește „Fizz" la multiplii lui 3, „Buzz" la multiplii lui 5, „FizzBuzz" la ambele.',
+    sol: `for (let i = 1; i <= 20; i++) {
+  if (i % 15 === 0) console.log('FizzBuzz')
+  else if (i % 3 === 0) console.log('Fizz')
+  else if (i % 5 === 0) console.log('Buzz')
+  else console.log(i)
+}`
+  },
+  {
+    title: 'Inversează un șir',
+    diff: 'Începător',
+    color: 'py',
+    desc: 'Inversează „Moldova" fără a folosi metode built-in de reverse.',
+    sol: `s = "Moldova"
+rez = ""
+for c in s:
+    rez = c + rez
+print(rez)  # avodloM`
+  },
+  {
+    title: 'Sumă pătrate pare',
+    diff: 'Mediu',
+    color: 'py',
+    desc: 'Suma pătratelor numerelor pare din 1..100 cu list comprehension.',
+    sol: `total = sum(x*x for x in range(1, 101) if x % 2 == 0)
+print(total)  # 171700`
+  },
+  {
+    title: 'Fetch JSON',
+    diff: 'Mediu',
+    color: 'node',
+    desc: 'Ia date de la api.github.com/users/octocat și tipărește numele și nr. de repo-uri publice.',
+    sol: `const r = await fetch('https://api.github.com/users/octocat')
+const u = await r.json()
+console.log(u.name, '-', u.public_repos, 'repo-uri')`
+  },
+  {
+    title: 'Numără cuvintele',
+    diff: 'Mediu',
+    color: 'py',
+    desc: 'Pentru un text dat, numără apariția fiecărui cuvânt (case-insensitive).',
+    sol: `from collections import Counter
+text = "Salut salut Moldova drag mi-e Moldova"
+words = text.lower().split()
+print(Counter(words))`
+  },
+  {
+    title: 'Promise.all paralel',
+    diff: 'Avansat',
+    color: 'node',
+    desc: 'Cere în paralel 3 user-i de la GitHub și afișează numele lor.',
+    sol: `const users = ['octocat', 'torvalds', 'gaearon']
+const data = await Promise.all(
+  users.map(u => fetch(\`https://api.github.com/users/\${u}\`).then(r => r.json()))
+)
+data.forEach(u => console.log(u.login, '->', u.name))`
+  },
+];
+
+const exList = document.getElementById('exerciseList');
+exercises.forEach((ex, i) => {
+  const colorCls = ex.color === 'node' ? 'text-node' : 'text-py';
+  const card = document.createElement('div');
+  card.className = 'card p-5 fade-in';
+  card.style.animationDelay = (0.05 * i) + 's';
+  card.innerHTML = `
+    <div class="flex items-center justify-between mb-2">
+      <span class="text-xs font-mono ${colorCls}">${ex.color === 'node' ? 'JavaScript' : 'Python'} · ${ex.diff}</span>
+      <span class="text-xs text-muted">#${i+1}</span>
+    </div>
+    <h3 class="text-lg font-bold">${ex.title}</h3>
+    <p class="text-sm text-muted mt-1.5">${ex.desc}</p>
+    <button class="mt-3 text-xs font-semibold ${colorCls} hover:underline" onclick="toggleSol(${i})">Vezi soluția ↓</button>
+    <pre id="sol-${i}" class="hidden code-block mt-3 !text-xs"></pre>
+  `;
+  exList.appendChild(card);
+});
+
+function toggleSol(i) {
+  const el = document.getElementById('sol-' + i);
+  if (el.classList.contains('hidden')) {
+    el.textContent = exercises[i].sol;
+    el.classList.remove('hidden');
+  } else {
+    el.classList.add('hidden');
+  }
+}
+
+/* ===== Joburi ===== */
+const jobSites = {
+  node: [
+    {
+      site: 'rabota.md',
+      desc: 'Cel mai mare portal de joburi din Moldova',
+      url: 'https://www.rabota.md/ro/search/vacancy?query=Node.js',
+      color: 'node',
+    },
+    {
+      site: '999.md',
+      desc: 'Anunțuri proaspete IT/programare',
+      url: 'https://999.md/ro/list/services/it?q=Node.js',
+      color: 'node',
+    },
+    {
+      site: 'lucru.md',
+      desc: 'Vacancii Junior · Mid · Senior',
+      url: 'https://lucru.md/ro/vacancies?q=Node.js',
+      color: 'node',
+    },
+    {
+      site: 'delucru.md',
+      desc: 'Joburi IT actualizate zilnic',
+      url: 'https://delucru.md/ro/jobs?keywords=nodejs',
+      color: 'node',
+    },
+  ],
+  py: [
+    {
+      site: 'rabota.md',
+      desc: 'Cel mai mare portal de joburi din Moldova',
+      url: 'https://www.rabota.md/ro/search/vacancy?query=Python',
+      color: 'py',
+    },
+    {
+      site: '999.md',
+      desc: 'Anunțuri proaspete IT/programare',
+      url: 'https://999.md/ro/list/services/it?q=Python',
+      color: 'py',
+    },
+    {
+      site: 'lucru.md',
+      desc: 'Vacancii Junior · Mid · Senior',
+      url: 'https://lucru.md/ro/vacancies?q=Python',
+      color: 'py',
+    },
+    {
+      site: 'delucru.md',
+      desc: 'Joburi IT actualizate zilnic',
+      url: 'https://delucru.md/ro/jobs?keywords=python',
+      color: 'py',
+    },
+  ],
+};
+
+let jobLang = 'node';
+const jobGrid = document.getElementById('jobGrid');
+
+function renderJobs() {
+  const items = jobSites[jobLang];
+  const colorClass = jobLang === 'node' ? 'text-node' : 'text-py';
+  const glowClass = jobLang === 'node' ? 'glow-node' : 'glow-py';
+  jobGrid.innerHTML = items.map((j, i) => `
+    <a href="${j.url}" target="_blank" rel="noopener noreferrer"
+       class="card card-hover p-6 group ${i === 0 ? glowClass : ''}"
+       style="animation-delay:${i*0.06}s">
+      <div class="flex items-center justify-between">
+        <div class="font-mono text-xl font-bold ${colorClass}">${j.site}</div>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             class="text-muted group-hover:${colorClass.replace('text-','text-')} transition">
+          <path d="M7 17L17 7M17 7H8M17 7V16" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="text-sm text-muted mt-2">${j.desc}</div>
+      <div class="mt-5 inline-flex items-center gap-2 text-xs font-mono text-muted bg-panel2 rounded-md px-2.5 py-1.5">
+        <span class="w-1.5 h-1.5 rounded-full bg-node animate-pulse"></span>
+        Caută <span class="${colorClass} font-bold">${jobLang === 'node' ? 'Node.js' : 'Python'}</span>
+      </div>
+    </a>
+  `).join('');
+}
+
+function setJobLang(l) {
+  jobLang = l;
+  document.getElementById('jobNode').className =
+    l === 'node' ? 'px-5 py-2 rounded-lg font-semibold text-sm bg-node text-bg' : 'px-5 py-2 rounded-lg font-semibold text-sm text-muted hover:text-text';
+  document.getElementById('jobPy').className =
+    l === 'py' ? 'px-5 py-2 rounded-lg font-semibold text-sm bg-py text-bg' : 'px-5 py-2 rounded-lg font-semibold text-sm text-muted hover:text-text';
+  renderJobs();
+}
+renderJobs();
+
+</script>
+</body>
+</html>
